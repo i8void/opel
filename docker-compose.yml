@@ -1,0 +1,71 @@
+services:
+  kali:
+    build:
+      context: ./kali
+      dockerfile: Dockerfile
+    container_name: opel-kali
+    networks:
+      - opel-lab
+    volumes:
+      - ./kali/reports:/root/reports
+      - ./kali/tools:/root/tools
+      - ./intel:/root/intel
+    environment:
+      - OT_SIMULATOR_HOST=ot-simulator
+    # Add network capabilities for advanced network operations
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    stdin_open: true
+    tty: true
+    # Keep container running
+    command: /bin/bash
+
+  ot-simulator:
+    build:
+      context: ./ot-simulator
+      dockerfile: Dockerfile
+    container_name: opel-ot-simulator
+    networks:
+      - opel-lab
+    volumes:
+      - ./ot-simulator/config:/app/config
+      - ./ot-simulator/logs:/app/logs
+    # All ports are internal only - accessible only within the Docker network
+    # ports:
+    #   # Modbus TCP
+    #   - "502:502/tcp"
+    #   # S7 (Siemens)
+    #   - "102:102/tcp"
+    #   # IEC 104
+    #   - "2404:2404/tcp"
+    #   # DNP3 over TCP
+    #   - "20000:20000/tcp"
+    #   # BACnet/IP (UDP)
+    #   - "47808:47808/udp"
+    #   # EtherNet/IP (TCP and UDP)
+    #   - "2222:2222/tcp"
+    #   - "2222:2222/udp"
+    # Note: All protocol simulators are accessible internally via Docker network:
+    # - Modbus: 502, S7: 102, IEC 104: 2404, DNP3: 20000
+    # - BACnet: 47808, EtherNet/IP: 2222
+    environment:
+      - MODBUS_ENABLED=true
+      - S7_ENABLED=true
+      - IEC104_ENABLED=true
+      - DNP3_ENABLED=true
+      - BACNET_ENABLED=true
+      - ETHERNETIP_ENABLED=true
+    command: /app/scripts/start-simulators.sh
+
+networks:
+  opel-lab:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  intel-data:
+  reports-data:
+
