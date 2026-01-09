@@ -1,7 +1,7 @@
 # OT Security Assessment Report
 
 - **Target Network:** 172.20.0.0/24
-- **Assessment Date:** January 8, 2026
+- **Assessment Date:** January 9, 2026
 - **Assessment Type:** Two-Stage OT/ICS Security Assessment
 - **Environment:** Lab/Test Environment
 - **Methodology:** NIST SP 800-82 Rev 3 - Guide to OT Security
